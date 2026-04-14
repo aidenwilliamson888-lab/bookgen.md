@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📚 ISBN FINDER · STUDIO FINAL (Cari ISBN untuk Generator)</title>
+    <title>📚 ISBN GENERATOR BY CATEGORY · STUDIO FINAL</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -110,7 +110,7 @@
             gap: 0.5rem;
         }
         .input-group label i { color: #3b82f6; }
-        .input-group input, .input-group select, .input-group textarea {
+        .input-group select, .input-group input {
             background: rgba(10, 15, 30, 0.7);
             border: 1px solid #2a3a60;
             border-radius: 0.8rem;
@@ -119,30 +119,31 @@
             color: white;
             transition: all 0.3s ease;
         }
-        .input-group input:focus, .input-group select:focus {
+        .input-group select:focus, .input-group input:focus {
             outline: none;
             border-color: #3b82f6;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
         }
-        .search-type {
+        
+        .category-grid {
+            grid-column: 1 / -1;
             display: flex;
-            gap: 1rem;
-            align-items: center;
             flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
         }
-        .search-type label {
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            cursor: pointer;
-            font-weight: normal;
-            text-transform: none;
+        .category-btn {
+            background: rgba(30, 40, 65, 0.8);
+            border: 1px solid #3d5a8c;
+            border-radius: 2rem;
+            padding: 0.4rem 1rem;
+            font-size: 0.75rem;
             color: #b5d0ff;
+            cursor: pointer;
+            transition: all 0.2s;
         }
-        .search-type input {
-            width: auto;
-            margin: 0;
-        }
+        .category-btn:hover { background: #3b82f6; border-color: #3b82f6; color: white; }
+        .category-btn.active { background: #3b82f6; border-color: #3b82f6; color: white; }
         
         .button-group {
             display: flex;
@@ -170,16 +171,7 @@
         .btn-primary { background: linear-gradient(135deg, #1d4ed8, #3b82f6); border-color: #60a5fa; }
         .btn-success { background: linear-gradient(135deg, #0f6e4a, #10b981); border-color: #34d399; }
         .btn-info { background: linear-gradient(135deg, #6d28d9, #8b5cf6); border-color: #a78bfa; }
-        .btn-warning { background: linear-gradient(135deg, #b45309, #f59e0b); border-color: #fbbf24; }
         
-        .progress-area {
-            background: rgba(18, 25, 45, 0.8);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(59, 130, 246, 0.25);
-            border-radius: 1rem;
-            padding: 1rem;
-            margin: 1rem 0;
-        }
         .log-area {
             background: rgba(8, 12, 25, 0.8);
             border-radius: 0.8rem;
@@ -189,7 +181,7 @@
             font-family: monospace;
             font-size: 0.7rem;
             border: 1px solid #2a3a60;
-            margin-top: 0.8rem;
+            margin: 1rem 0;
         }
         .log-area div { padding: 0.2rem 0; border-bottom: 1px solid rgba(59, 130, 246, 0.1); }
         
@@ -198,7 +190,7 @@
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 1rem;
             margin-top: 1rem;
-            max-height: 500px;
+            max-height: 400px;
             overflow-y: auto;
         }
         .book-card {
@@ -209,16 +201,15 @@
             transition: all 0.3s;
         }
         .book-card:hover { transform: translateY(-2px); border-color: #3b82f6; }
-        .book-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.3rem; color: white; }
-        .book-author { font-size: 0.75rem; color: #8ba3d9; margin-bottom: 0.5rem; }
-        .book-isbn { font-family: monospace; font-size: 0.8rem; color: #4ade80; margin: 0.3rem 0; }
-        .book-isbn i { color: #10b981; width: 20px; }
+        .book-title { font-weight: 700; font-size: 0.9rem; margin-bottom: 0.3rem; color: white; }
+        .book-author { font-size: 0.7rem; color: #8ba3d9; margin-bottom: 0.5rem; }
+        .book-isbn { font-family: monospace; font-size: 0.75rem; color: #4ade80; margin: 0.3rem 0; }
         .copy-btn {
             background: rgba(16, 185, 129, 0.2);
             border: 1px solid #10b981;
             border-radius: 20px;
             padding: 0.2rem 0.6rem;
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             cursor: pointer;
             margin-left: 0.5rem;
             transition: all 0.2s;
@@ -246,8 +237,8 @@
             flex: 1;
             max-height: 100px;
             overflow-y: auto;
+            white-space: pre-wrap;
         }
-        
         .footer {
             margin-top: 1.5rem;
             text-align: center;
@@ -262,96 +253,115 @@
 <div class="container">
     <div class="hero-header">
         <div class="hero-title">
-            <i class="fas fa-search"></i> ISBN FINDER · STUDIO FINAL
+            <i class="fas fa-magic"></i> ISBN GENERATOR BY CATEGORY
         </div>
         <div class="hero-badge">
-            <span class="badge"><i class="fas fa-book"></i> Cari ISBN dari Judul</span>
-            <span class="badge"><i class="fab fa-google"></i> Google Books</span>
+            <span class="badge"><i class="fas fa-tag"></i> Pilih Kategori</span>
+            <span class="badge"><i class="fas fa-random"></i> Auto Generate</span>
             <span class="badge"><i class="fas fa-copy"></i> Copy ISBN</span>
-            <span class="badge"><i class="fas fa-file-export"></i> Export ke Generator</span>
+            <span class="badge"><i class="fas fa-file-export"></i> Siap untuk Generator</span>
         </div>
     </div>
 
     <div class="control-panel">
         <div class="input-group">
-            <label><i class="fas fa-search"></i> Cari Buku</label>
-            <input type="text" id="searchQuery" placeholder="Judul buku, penulis, atau kata kunci...">
+            <label><i class="fas fa-tags"></i> Pilih Kategori Buku</label>
+            <select id="categorySelect">
+                <option value="fiction">📖 Fiction (Fiksi)</option>
+                <option value="nonfiction">📚 Non-Fiction</option>
+                <option value="fantasy">🐉 Fantasy</option>
+                <option value="romance">💕 Romance</option>
+                <option value="thriller">🔪 Thriller</option>
+                <option value="science">🔬 Science</option>
+                <option value="history">🏛️ History</option>
+                <option value="business">💼 Business</option>
+                <option value="selfhelp">🌱 Self-Help</option>
+                <option value="children">🧸 Children</option>
+                <option value="cooking">🍳 Cooking</option>
+                <option value="art">🎨 Art</option>
+                <option value="technology">💻 Technology</option>
+                <option value="philosophy">🧠 Philosophy</option>
+                <option value="religion">⛪ Religion</option>
+                <option value="travel">✈️ Travel</option>
+                <option value="sports">⚽ Sports</option>
+                <option value="poetry">📜 Poetry</option>
+                <option value="biography">👤 Biography</option>
+            </select>
         </div>
 
         <div class="input-group">
-            <label><i class="fas fa-filter"></i> Filter</label>
-            <select id="searchFilter">
-                <option value="all">Semua (All)</option>
-                <option value="title">Judul (Title)</option>
-                <option value="author">Penulis (Author)</option>
-                <option value="publisher">Penerbit (Publisher)</option>
-                <option value="isbn">ISBN</option>
-            </select>
+            <label><i class="fas fa-hashtag"></i> Jumlah Buku yang Dicari</label>
+            <input type="number" id="maxResults" value="50" min="5" max="200" step="5">
         </div>
 
         <div class="input-group">
             <label><i class="fas fa-globe"></i> Negara / Domain</label>
             <select id="countrySelect">
-                <option value="all">🌐 Semua (All Countries)</option>
+                <option value="all">🌐 Semua Negara</option>
                 <option value="US">🇺🇸 United States</option>
                 <option value="BR">🇧🇷 Brasil</option>
                 <option value="FR">🇫🇷 France</option>
                 <option value="ES">🇪🇸 España</option>
                 <option value="DE">🇩🇪 Deutschland</option>
                 <option value="UK">🇬🇧 United Kingdom</option>
-                <option value="ID">🇮🇩 Indonesia</option>
             </select>
-            <small style="color: #8ba3d9;">Pilih negara untuk mendapatkan ISBN yang sesuai</small>
+        </div>
+
+        <div class="category-grid">
+            <span style="color:#8ba3d9; font-size:0.7rem;">Popular:</span>
+            <button class="category-btn" data-cat="fiction">Fiction</button>
+            <button class="category-btn" data-cat="fantasy">Fantasy</button>
+            <button class="category-btn" data-cat="romance">Romance</button>
+            <button class="category-btn" data-cat="thriller">Thriller</button>
+            <button class="category-btn" data-cat="science">Science</button>
+            <button class="category-btn" data-cat="selfhelp">Self-Help</button>
+            <button class="category-btn" data-cat="business">Business</button>
+            <button class="category-btn" data-cat="history">History</button>
         </div>
 
         <div class="button-group">
-            <button class="btn btn-primary" id="searchBtn"><i class="fas fa-search"></i> Cari ISBN</button>
-            <button class="btn btn-success" id="copyAllIsbnBtn" disabled><i class="fas fa-copy"></i> Copy Semua ISBN</button>
-            <button class="btn btn-info" id="exportToGeneratorBtn" disabled><i class="fas fa-exchange-alt"></i> Kirim ke Generator</button>
-            <button class="btn btn-warning" id="clearResultsBtn"><i class="fas fa-trash"></i> Clear</button>
+            <button class="btn btn-primary" id="generateBtn"><i class="fas fa-magic"></i> Generate ISBN</button>
+            <button class="btn btn-success" id="copyAllBtn" disabled><i class="fas fa-copy"></i> Copy Semua ISBN</button>
+            <button class="btn btn-info" id="clearBtn"><i class="fas fa-trash"></i> Clear</button>
         </div>
     </div>
 
-    <div class="progress-area">
-        <div class="log-area" id="logArea">
-            <div>⏳ Siap mencari ISBN dari berbagai sumber...</div>
-        </div>
+    <div class="log-area" id="logArea">
+        <div>⏳ Pilih kategori dan klik Generate ISBN...</div>
     </div>
 
     <div id="resultsPanel">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; flex-wrap: wrap; gap: 0.5rem;">
-            <h3><i class="fas fa-list"></i> Hasil Pencarian ISBN</h3>
-            <span id="resultCount" style="color: #8ba3d9; font-size: 0.8rem;">0 buku ditemukan</span>
+            <h3><i class="fas fa-list"></i> Daftar Buku & ISBN</h3>
+            <span id="resultCount" style="color: #8ba3d9; font-size: 0.8rem;">0 buku</span>
         </div>
         <div class="results-grid" id="resultsGrid">
             <div style="color: #6b83b0; text-align: center; padding: 2rem; grid-column: 1/-1;">
-                <i class="fas fa-search" style="font-size: 2rem; opacity: 0.5;"></i>
-                <p>Cari buku untuk mendapatkan ISBN</p>
+                <i class="fas fa-magic" style="font-size: 2rem; opacity: 0.5;"></i>
+                <p>Pilih kategori dan klik Generate ISBN</p>
             </div>
         </div>
     </div>
 
     <div id="exportPanel" class="export-panel" style="display: none;">
-        <span><i class="fas fa-code"></i> ISBN List (siap copy ke generator):</span>
+        <span><i class="fas fa-code"></i> ISBN List (copy ke Book Generator):</span>
         <div class="isbn-output" id="isbnOutput"></div>
         <button class="btn btn-success" id="copyOutputBtn" style="padding: 0.3rem 0.8rem;"><i class="fas fa-copy"></i> Copy</button>
     </div>
 
     <div class="footer">
-        <i class="fas fa-search" style="color:#3b82f6;"></i> ISBN FINDER · STUDIO FINAL | Cari ISBN dari judul buku | Data dari Google Books API
+        <i class="fas fa-magic" style="color:#3b82f6;"></i> ISBN GENERATOR BY CATEGORY · Pilih kategori, auto dapatkan ISBN dari Google Books
     </div>
 </div>
 
 <script>
 (function() {
-    // DOM Elements
-    const searchQuery = document.getElementById('searchQuery');
-    const searchFilter = document.getElementById('searchFilter');
+    const categorySelect = document.getElementById('categorySelect');
+    const maxResultsInput = document.getElementById('maxResults');
     const countrySelect = document.getElementById('countrySelect');
-    const searchBtn = document.getElementById('searchBtn');
-    const copyAllIsbnBtn = document.getElementById('copyAllIsbnBtn');
-    const exportToGeneratorBtn = document.getElementById('exportToGeneratorBtn');
-    const clearResultsBtn = document.getElementById('clearResultsBtn');
+    const generateBtn = document.getElementById('generateBtn');
+    const copyAllBtn = document.getElementById('copyAllBtn');
+    const clearBtn = document.getElementById('clearBtn');
     const copyOutputBtn = document.getElementById('copyOutputBtn');
     const logArea = document.getElementById('logArea');
     const resultsGrid = document.getElementById('resultsGrid');
@@ -369,27 +379,17 @@
         logArea.scrollTop = logArea.scrollHeight;
     }
 
-    function clearLogs() { logArea.innerHTML = '<div>⏳ Log dibersihkan...</div>'; }
-
-    // Search books from Google Books API
-    async function searchBooks(query, filter, country) {
-        let searchTerm = query;
+    // Search books from Google Books API by category
+    async function searchBooksByCategory(category, maxResults, country) {
+        let searchTerm = `subject:${category}`;
         
-        // Apply filter
-        if (filter !== 'all') {
-            searchTerm = `${filter}:${query}`;
-        }
-        
-        // Add country restriction
         let countryParam = '';
         if (country !== 'all') {
-            const countryCodes = {
-                'US': 'US', 'BR': 'BR', 'FR': 'FR', 'ES': 'ES', 'DE': 'DE', 'UK': 'GB', 'ID': 'ID'
-            };
+            const countryCodes = { 'US': 'US', 'BR': 'BR', 'FR': 'FR', 'ES': 'ES', 'DE': 'DE', 'UK': 'GB' };
             countryParam = `&country=${countryCodes[country] || 'US'}`;
         }
         
-        const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(searchTerm)}&maxResults=40${countryParam}`;
+        const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(searchTerm)}&maxResults=${maxResults}&orderBy=relevance${countryParam}`;
         
         try {
             const response = await fetch(url);
@@ -405,7 +405,6 @@
                 const volumeInfo = item.volumeInfo;
                 const industryIdentifiers = volumeInfo.industryIdentifiers || [];
                 
-                // Get ISBN-13 and ISBN-10
                 let isbn13 = null;
                 let isbn10 = null;
                 
@@ -414,7 +413,6 @@
                     if (id.type === 'ISBN_10') isbn10 = id.identifier;
                 }
                 
-                // Prefer ISBN-13
                 const isbn = isbn13 || isbn10;
                 
                 if (isbn) {
@@ -426,9 +424,7 @@
                         isbn: isbn,
                         isbn13: isbn13,
                         isbn10: isbn10,
-                        description: volumeInfo.description ? volumeInfo.description.substring(0, 200) : null,
-                        coverUrl: volumeInfo.imageLinks?.thumbnail || null,
-                        language: volumeInfo.language || null,
+                        categories: volumeInfo.categories || [],
                         pageCount: volumeInfo.pageCount || null
                     });
                 }
@@ -441,49 +437,44 @@
         }
     }
 
-    async function performSearch() {
-        const query = searchQuery.value.trim();
-        if (!query) {
-            log('❌ Masukkan judul buku atau kata kunci', 'error');
-            return;
-        }
-        
-        const filter = searchFilter.value;
+    async function generateISBN() {
+        const category = categorySelect.value;
+        const maxResults = parseInt(maxResultsInput.value) || 50;
         const country = countrySelect.value;
         
-        log(`🔍 Mencari "${query}" dengan filter: ${filter}, negara: ${country}...`);
+        const categoryName = categorySelect.options[categorySelect.selectedIndex].text;
         
-        searchBtn.disabled = true;
-        searchBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Mencari...';
+        log(`🎲 Menggenerate ISBN untuk kategori: ${categoryName} (maks ${maxResults} buku)...`);
         
-        const results = await searchBooks(query, filter, country);
+        generateBtn.disabled = true;
+        generateBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Generating...';
         
-        searchBtn.disabled = false;
-        searchBtn.innerHTML = '<i class="fas fa-search"></i> Cari ISBN';
+        const results = await searchBooksByCategory(category, maxResults, country);
+        
+        generateBtn.disabled = false;
+        generateBtn.innerHTML = '<i class="fas fa-magic"></i> Generate ISBN';
         
         if (results.length === 0) {
-            log('❌ Tidak ada buku ditemukan', 'error');
+            log(`❌ Tidak ada buku ditemukan untuk kategori ${categoryName}`, 'error');
             searchResults = [];
             updateResultsDisplay();
-            copyAllIsbnBtn.disabled = true;
-            exportToGeneratorBtn.disabled = true;
+            copyAllBtn.disabled = true;
             exportPanel.style.display = 'none';
             return;
         }
         
         searchResults = results;
         updateResultsDisplay();
-        copyAllIsbnBtn.disabled = false;
-        exportToGeneratorBtn.disabled = false;
+        copyAllBtn.disabled = false;
         
-        log(`✅ Ditemukan ${results.length} buku`, 'success');
+        log(`✅ Berhasil menggenerate ${results.length} ISBN dari kategori ${categoryName}`, 'success');
     }
     
     function updateResultsDisplay() {
-        resultCountSpan.innerText = `${searchResults.length} buku ditemukan`;
+        resultCountSpan.innerText = `${searchResults.length} buku`;
         
         if (!searchResults.length) {
-            resultsGrid.innerHTML = '<div style="color: #6b83b0; text-align: center; padding: 2rem; grid-column: 1/-1;"><i class="fas fa-search" style="font-size: 2rem; opacity: 0.5;"></i><p>Tidak ada hasil</p></div>';
+            resultsGrid.innerHTML = '<div style="color: #6b83b0; text-align: center; padding: 2rem; grid-column: 1/-1;"><i class="fas fa-magic" style="font-size: 2rem; opacity: 0.5;"></i><p>Tidak ada hasil</p></div>';
             return;
         }
         
@@ -517,7 +508,7 @@
     
     function copySingleIsbn(isbn) {
         navigator.clipboard.writeText(isbn).then(() => {
-            log(`📋 ISBN ${isbn} disalin ke clipboard`, 'success');
+            log(`📋 ISBN ${isbn} disalin`, 'success');
         }).catch(() => {
             log('❌ Gagal menyalin', 'error');
         });
@@ -532,56 +523,39 @@
         });
     }
     
-    function exportToGenerator() {
-        const isbnList = searchResults.map(book => book.isbn).join('\n');
-        
-        // Try to find the Book Generator textarea or create a new window
-        const bookGeneratorTextarea = document.getElementById('isbnList');
-        
-        if (bookGeneratorTextarea) {
-            // If Book Generator is open in same page
-            bookGeneratorTextarea.value = isbnList;
-            log(`✅ ${searchResults.length} ISBN dikirim ke Book Generator!`, 'success');
-        } else {
-            // Copy to clipboard and show instruction
-            navigator.clipboard.writeText(isbnList).then(() => {
-                log(`📋 ${searchResults.length} ISBN disalin ke clipboard! Buka Book Generator dan paste di textarea.`, 'success');
-            });
-        }
-    }
-    
     function clearResults() {
         searchResults = [];
         updateResultsDisplay();
-        copyAllIsbnBtn.disabled = true;
-        exportToGeneratorBtn.disabled = true;
+        copyAllBtn.disabled = true;
         exportPanel.style.display = 'none';
-        searchQuery.value = '';
-        log('🗑️ Hasil pencarian dibersihkan', 'info');
+        log('🗑️ Hasil dibersihkan', 'info');
     }
     
-    // Global function for copy button
+    // Global function
     window.copySingleIsbn = copySingleIsbn;
     
-    // Event listeners
-    searchBtn.addEventListener('click', performSearch);
-    copyAllIsbnBtn.addEventListener('click', copyAllIsbn);
-    exportToGeneratorBtn.addEventListener('click', exportToGenerator);
-    clearResultsBtn.addEventListener('click', clearResults);
-    copyOutputBtn.addEventListener('click', () => {
-        const text = isbnOutput.textContent;
-        navigator.clipboard.writeText(text).then(() => {
-            log('📋 Semua ISBN disalin ke clipboard!', 'success');
+    // Category buttons
+    document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const cat = btn.getAttribute('data-cat');
+            categorySelect.value = cat;
+            generateISBN();
         });
     });
     
-    // Enter key to search
-    searchQuery.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') performSearch();
+    // Event listeners
+    generateBtn.addEventListener('click', generateISBN);
+    copyAllBtn.addEventListener('click', copyAllIsbn);
+    clearBtn.addEventListener('click', clearResults);
+    copyOutputBtn.addEventListener('click', () => {
+        const text = isbnOutput.textContent;
+        navigator.clipboard.writeText(text).then(() => {
+            log(`📋 ${searchResults.length} ISBN disalin!`, 'success');
+        });
     });
     
-    log('✅ ISBN FINDER · STUDIO FINAL siap digunakan!');
-    log('📚 Cari buku berdasarkan judul, penulis, atau penerbit');
+    log('✅ ISBN GENERATOR BY CATEGORY siap digunakan!');
+    log('📚 Pilih kategori buku, klik Generate, dapatkan daftar ISBN');
     log('📋 Copy ISBN dan gunakan di Book Generator');
 })();
 </script>
