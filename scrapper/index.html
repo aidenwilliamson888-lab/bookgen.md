@@ -145,6 +145,29 @@
         .category-btn:hover { background: #3b82f6; border-color: #3b82f6; color: white; }
         .category-btn.active { background: #3b82f6; border-color: #3b82f6; color: white; }
         
+        .mode-switch {
+            grid-column: 1 / -1;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            padding: 0.5rem;
+            background: rgba(20, 30, 55, 0.4);
+            border-radius: 1rem;
+        }
+        .mode-switch label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            color: #b5d0ff;
+            font-size: 0.8rem;
+        }
+        .mode-switch input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
         .button-group {
             display: flex;
             gap: 0.8rem;
@@ -171,6 +194,7 @@
         .btn-primary { background: linear-gradient(135deg, #1d4ed8, #3b82f6); border-color: #60a5fa; }
         .btn-success { background: linear-gradient(135deg, #0f6e4a, #10b981); border-color: #34d399; }
         .btn-info { background: linear-gradient(135deg, #6d28d9, #8b5cf6); border-color: #a78bfa; }
+        .btn-warning { background: linear-gradient(135deg, #b45309, #f59e0b); border-color: #fbbf24; }
         
         .log-area {
             background: rgba(8, 12, 25, 0.8);
@@ -239,6 +263,18 @@
             overflow-y: auto;
             white-space: pre-wrap;
         }
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.6s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
         .footer {
             margin-top: 1.5rem;
             text-align: center;
@@ -281,21 +317,16 @@
                 <option value="art">🎨 Art</option>
                 <option value="technology">💻 Technology</option>
                 <option value="philosophy">🧠 Philosophy</option>
-                <option value="religion">⛪ Religion</option>
-                <option value="travel">✈️ Travel</option>
-                <option value="sports">⚽ Sports</option>
-                <option value="poetry">📜 Poetry</option>
-                <option value="biography">👤 Biography</option>
             </select>
         </div>
 
         <div class="input-group">
-            <label><i class="fas fa-hashtag"></i> Jumlah Buku yang Dicari</label>
-            <input type="number" id="maxResults" value="50" min="5" max="200" step="5">
+            <label><i class="fas fa-hashtag"></i> Jumlah Buku</label>
+            <input type="number" id="maxResults" value="30" min="5" max="100" step="5">
         </div>
 
         <div class="input-group">
-            <label><i class="fas fa-globe"></i> Negara / Domain</label>
+            <label><i class="fas fa-globe"></i> Negara</label>
             <select id="countrySelect">
                 <option value="all">🌐 Semua Negara</option>
                 <option value="US">🇺🇸 United States</option>
@@ -305,6 +336,14 @@
                 <option value="DE">🇩🇪 Deutschland</option>
                 <option value="UK">🇬🇧 United Kingdom</option>
             </select>
+        </div>
+
+        <div class="mode-switch">
+            <label>
+                <input type="checkbox" id="demoModeCheckbox">
+                <i class="fas fa-flask"></i> Mode Demo (Generate ISBN Dummy)
+            </label>
+            <span style="color: #fbbf24; font-size: 0.65rem;">⚠️ Aktifkan jika API Google Books error</span>
         </div>
 
         <div class="category-grid">
@@ -322,7 +361,7 @@
         <div class="button-group">
             <button class="btn btn-primary" id="generateBtn"><i class="fas fa-magic"></i> Generate ISBN</button>
             <button class="btn btn-success" id="copyAllBtn" disabled><i class="fas fa-copy"></i> Copy Semua ISBN</button>
-            <button class="btn btn-info" id="clearBtn"><i class="fas fa-trash"></i> Clear</button>
+            <button class="btn btn-warning" id="clearBtn"><i class="fas fa-trash"></i> Clear</button>
         </div>
     </div>
 
@@ -350,7 +389,7 @@
     </div>
 
     <div class="footer">
-        <i class="fas fa-magic" style="color:#3b82f6;"></i> ISBN GENERATOR BY CATEGORY · Pilih kategori, auto dapatkan ISBN dari Google Books
+        <i class="fas fa-magic" style="color:#3b82f6;"></i> ISBN GENERATOR · Pilih kategori, auto dapatkan ISBN dari Google Books
     </div>
 </div>
 
@@ -359,6 +398,7 @@
     const categorySelect = document.getElementById('categorySelect');
     const maxResultsInput = document.getElementById('maxResults');
     const countrySelect = document.getElementById('countrySelect');
+    const demoModeCheckbox = document.getElementById('demoModeCheckbox');
     const generateBtn = document.getElementById('generateBtn');
     const copyAllBtn = document.getElementById('copyAllBtn');
     const clearBtn = document.getElementById('clearBtn');
@@ -379,8 +419,58 @@
         logArea.scrollTop = logArea.scrollHeight;
     }
 
-    // Search books from Google Books API by category
-    async function searchBooksByCategory(category, maxResults, country) {
+    // Generate dummy ISBN (valid format)
+    function generateDummyISBN() {
+        const prefix = ['978', '979'][Math.floor(Math.random() * 2)];
+        let rest = '';
+        for (let i = 0; i < 9; i++) {
+            rest += Math.floor(Math.random() * 10);
+        }
+        let full = prefix + rest;
+        // Calculate checksum
+        let sum = 0;
+        for (let i = 0; i < 12; i++) {
+            sum += parseInt(full[i]) * (i % 2 === 0 ? 1 : 3);
+        }
+        let checksum = (10 - (sum % 10)) % 10;
+        return full + checksum;
+    }
+
+    // Generate dummy books
+    function generateDummyBooks(category, count) {
+        const categoryNames = {
+            fiction: ['The Silent Echo', 'Shadows of Tomorrow', 'Whispers in the Dark', 'The Last Chapter', 'Beyond the Horizon'],
+            fantasy: ['Dragon's Legacy', 'The Crystal Kingdom', 'Shadow of the Wizard', 'Elven Prophecy', 'The Magic Within'],
+            romance: ['Heartbeat', 'Love in Paris', 'Forever Yours', 'Summer of Love', 'The Wedding Promise'],
+            thriller: ['The Hidden Killer', 'Deadly Secrets', 'Midnight Assassin', 'The Final Victim', 'Silent Witness'],
+            science: ['Quantum Dreams', 'The Einstein Code', 'Parallel Worlds', 'The Time Paradox', 'AI Revolution'],
+            selfhelp: ['Atomic Mindset', 'The Power of Habit', 'Limitless', 'Daily Stoic', 'Focus Mastery'],
+            business: ['Startup Kingdom', 'The Marketing Edge', 'Leadership Code', 'Money Mindset', 'The Strategy Path'],
+            history: ['The Lost Empire', 'Warriors of the Past', 'Civilization Dawn', 'Kings and Queens', 'Ancient Secrets']
+        };
+        
+        const titles = categoryNames[category] || categoryNames.fiction;
+        const books = [];
+        
+        for (let i = 0; i < count; i++) {
+            const title = titles[Math.floor(Math.random() * titles.length)] + (i > 0 ? ` ${i+1}` : '');
+            const authors = ['John Smith', 'Sarah Johnson', 'Michael Brown', 'Emily Davis', 'David Wilson'];
+            const publishers = ['Penguin Books', 'HarperCollins', 'Simon & Schuster', 'Random House', 'Macmillan'];
+            
+            books.push({
+                title: title,
+                authors: [authors[Math.floor(Math.random() * authors.length)]],
+                publisher: publishers[Math.floor(Math.random() * publishers.length)],
+                isbn: generateDummyISBN(),
+                year: (2010 + Math.floor(Math.random() * 15)).toString(),
+                isDummy: true
+            });
+        }
+        return books;
+    }
+
+    // Search books from Google Books API
+    async function searchBooksFromGoogle(category, maxResults, country) {
         let searchTerm = `subject:${category}`;
         
         let countryParam = '';
@@ -391,65 +481,81 @@
         
         const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(searchTerm)}&maxResults=${maxResults}&orderBy=relevance${countryParam}`;
         
-        try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const data = await response.json();
-            
-            if (!data.items || data.items.length === 0) {
-                return [];
-            }
-            
-            const books = [];
-            for (const item of data.items) {
-                const volumeInfo = item.volumeInfo;
-                const industryIdentifiers = volumeInfo.industryIdentifiers || [];
-                
-                let isbn13 = null;
-                let isbn10 = null;
-                
-                for (const id of industryIdentifiers) {
-                    if (id.type === 'ISBN_13') isbn13 = id.identifier;
-                    if (id.type === 'ISBN_10') isbn10 = id.identifier;
-                }
-                
-                const isbn = isbn13 || isbn10;
-                
-                if (isbn) {
-                    books.push({
-                        title: volumeInfo.title || 'Unknown Title',
-                        authors: volumeInfo.authors || ['Unknown Author'],
-                        publisher: volumeInfo.publisher || 'Unknown',
-                        publishedDate: volumeInfo.publishedDate || null,
-                        isbn: isbn,
-                        isbn13: isbn13,
-                        isbn10: isbn10,
-                        categories: volumeInfo.categories || [],
-                        pageCount: volumeInfo.pageCount || null
-                    });
-                }
-            }
-            
-            return books;
-        } catch(e) {
-            log(`Error: ${e.message}`, 'error');
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        
+        if (!data.items || data.items.length === 0) {
             return [];
         }
+        
+        const books = [];
+        for (const item of data.items) {
+            const volumeInfo = item.volumeInfo;
+            const industryIdentifiers = volumeInfo.industryIdentifiers || [];
+            
+            let isbn13 = null;
+            let isbn10 = null;
+            
+            for (const id of industryIdentifiers) {
+                if (id.type === 'ISBN_13') isbn13 = id.identifier;
+                if (id.type === 'ISBN_10') isbn10 = id.identifier;
+            }
+            
+            const isbn = isbn13 || isbn10;
+            
+            if (isbn) {
+                books.push({
+                    title: volumeInfo.title || 'Unknown Title',
+                    authors: volumeInfo.authors || ['Unknown Author'],
+                    publisher: volumeInfo.publisher || 'Unknown',
+                    year: volumeInfo.publishedDate ? volumeInfo.publishedDate.slice(0,4) : null,
+                    isbn: isbn,
+                    isDummy: false
+                });
+            }
+        }
+        
+        return books;
     }
 
     async function generateISBN() {
         const category = categorySelect.value;
-        const maxResults = parseInt(maxResultsInput.value) || 50;
+        const maxResults = parseInt(maxResultsInput.value) || 30;
         const country = countrySelect.value;
+        const demoMode = demoModeCheckbox.checked;
         
         const categoryName = categorySelect.options[categorySelect.selectedIndex].text;
         
-        log(`🎲 Menggenerate ISBN untuk kategori: ${categoryName} (maks ${maxResults} buku)...`);
+        log(`🎲 Menggenerate ISBN untuk kategori: ${categoryName}...`);
         
         generateBtn.disabled = true;
-        generateBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Generating...';
+        generateBtn.innerHTML = '<span class="loading"></span> Generating...';
         
-        const results = await searchBooksByCategory(category, maxResults, country);
+        let results = [];
+        
+        if (demoMode) {
+            log(`📝 Mode Demo: Mengenerate ${maxResults} ISBN dummy...`, 'info');
+            results = generateDummyBooks(category, maxResults);
+            log(`✅ Berhasil mengenerate ${results.length} ISBN dummy!`, 'success');
+        } else {
+            try {
+                results = await searchBooksFromGoogle(category, maxResults, country);
+                
+                if (results.length === 0) {
+                    log(`⚠️ Tidak ada ISBN dari Google Books, beralih ke mode demo...`, 'warning');
+                    results = generateDummyBooks(category, maxResults);
+                    log(`✅ Mengenerate ${results.length} ISBN dummy sebagai alternatif`, 'success');
+                } else {
+                    log(`✅ Berhasil mendapatkan ${results.length} ISBN dari Google Books!`, 'success');
+                }
+            } catch(e) {
+                log(`❌ Error: ${e.message}`, 'error');
+                log(`⚠️ Beralih ke mode demo...`, 'warning');
+                results = generateDummyBooks(category, maxResults);
+                log(`✅ Mengenerate ${results.length} ISBN dummy sebagai alternatif`, 'success');
+            }
+        }
         
         generateBtn.disabled = false;
         generateBtn.innerHTML = '<i class="fas fa-magic"></i> Generate ISBN';
@@ -466,8 +572,6 @@
         searchResults = results;
         updateResultsDisplay();
         copyAllBtn.disabled = false;
-        
-        log(`✅ Berhasil menggenerate ${results.length} ISBN dari kategori ${categoryName}`, 'success');
     }
     
     function updateResultsDisplay() {
@@ -480,15 +584,14 @@
         
         resultsGrid.innerHTML = searchResults.map((book, idx) => `
             <div class="book-card">
-                <div class="book-title">${escapeHtml(book.title)}</div>
+                <div class="book-title">${escapeHtml(book.title)} ${book.isDummy ? '<span style="font-size:0.6rem; background:#f59e0b; padding:0.1rem 0.3rem; border-radius:10px;">Demo</span>' : ''}</div>
                 <div class="book-author"><i class="fas fa-user"></i> ${book.authors.join(', ')}</div>
                 <div class="book-isbn"><i class="fas fa-barcode"></i> ISBN: ${book.isbn}
                     <button class="copy-btn" onclick="copySingleIsbn('${book.isbn}')"><i class="fas fa-copy"></i> Copy</button>
                 </div>
                 <div style="font-size: 0.65rem; color: #6b83b0; margin-top: 0.3rem;">
                     <i class="fas fa-building"></i> ${book.publisher} 
-                    ${book.publishedDate ? `| 📅 ${book.publishedDate.slice(0,4)}` : ''}
-                    ${book.pageCount ? `| 📄 ${book.pageCount} hlm` : ''}
+                    ${book.year ? `| 📅 ${book.year}` : ''}
                 </div>
             </div>
         `).join('');
@@ -506,13 +609,13 @@
         return div.innerHTML;
     }
     
-    function copySingleIsbn(isbn) {
+    window.copySingleIsbn = function(isbn) {
         navigator.clipboard.writeText(isbn).then(() => {
             log(`📋 ISBN ${isbn} disalin`, 'success');
         }).catch(() => {
             log('❌ Gagal menyalin', 'error');
         });
-    }
+    };
     
     function copyAllIsbn() {
         const isbnList = searchResults.map(book => book.isbn).join('\n');
@@ -530,9 +633,6 @@
         exportPanel.style.display = 'none';
         log('🗑️ Hasil dibersihkan', 'info');
     }
-    
-    // Global function
-    window.copySingleIsbn = copySingleIsbn;
     
     // Category buttons
     document.querySelectorAll('.category-btn').forEach(btn => {
@@ -556,7 +656,7 @@
     
     log('✅ ISBN GENERATOR BY CATEGORY siap digunakan!');
     log('📚 Pilih kategori buku, klik Generate, dapatkan daftar ISBN');
-    log('📋 Copy ISBN dan gunakan di Book Generator');
+    log('💡 Jika API error, centang "Mode Demo" untuk generate ISBN dummy');
 })();
 </script>
 </body>
