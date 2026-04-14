@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📚 ISBN SCRAPER · STUDIO FINAL (Multi-Source)</title>
+    <title>📚 ISBN FINDER · STUDIO FINAL (Cari ISBN untuk Generator)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -36,7 +36,6 @@
         }
         .container { max-width: 1400px; margin: 0 auto; position: relative; z-index: 2; }
         
-        /* Header */
         .hero-header {
             background: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(12px);
@@ -84,7 +83,6 @@
             color: #b5d0ff;
         }
         
-        /* Control Panel */
         .control-panel {
             background: rgba(18, 25, 45, 0.8);
             backdrop-filter: blur(12px);
@@ -126,43 +124,24 @@
             border-color: #3b82f6;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
         }
-        .input-group textarea { min-height: 100px; resize: vertical; font-family: monospace; }
-        
-        .file-import, .split-setting {
-            grid-column: 1 / -1;
-            background: rgba(20, 30, 55, 0.6);
-            border-radius: 1rem;
-            padding: 1rem;
-            border: 1px dashed #3b82f6;
+        .search-type {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
         }
-        .file-import:hover { border-color: #8b5cf6; background: rgba(30, 40, 65, 0.7); }
-        .file-import label, .split-setting label {
-            color: #9bb5ff;
-            font-weight: 600;
+        .search-type label {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.3rem;
-            font-size: 0.8rem;
+            gap: 0.4rem;
+            cursor: pointer;
+            font-weight: normal;
+            text-transform: none;
+            color: #b5d0ff;
         }
-        .file-import input[type="file"] {
-            background: rgba(10, 15, 30, 0.7);
-            border: 1px solid #2a3a60;
-            border-radius: 0.6rem;
-            padding: 0.4rem 0.8rem;
-            color: white;
-            width: 100%;
-        }
-        .split-setting { border-color: #10b981; }
-        .split-setting label { color: #10b981; }
-        .split-setting input {
-            width: 80px;
-            background: rgba(10, 15, 30, 0.7);
-            border: 1px solid #10b981;
-            border-radius: 0.6rem;
-            padding: 0.4rem 0.8rem;
-            color: white;
-            text-align: center;
+        .search-type input {
+            width: auto;
+            margin: 0;
         }
         
         .button-group {
@@ -193,7 +172,6 @@
         .btn-info { background: linear-gradient(135deg, #6d28d9, #8b5cf6); border-color: #a78bfa; }
         .btn-warning { background: linear-gradient(135deg, #b45309, #f59e0b); border-color: #fbbf24; }
         
-        /* Progress */
         .progress-area {
             background: rgba(18, 25, 45, 0.8);
             backdrop-filter: blur(12px);
@@ -201,28 +179,6 @@
             border-radius: 1rem;
             padding: 1rem;
             margin: 1rem 0;
-        }
-        .progress-stats {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.8rem;
-            font-size: 0.8rem;
-            color: #b5d0ff;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-        .progress-bar-container {
-            height: 6px;
-            background: rgba(10, 15, 30, 0.6);
-            border-radius: 30px;
-            overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-            width: 0%;
-            transition: width 0.4s ease;
         }
         .log-area {
             background: rgba(8, 12, 25, 0.8);
@@ -237,10 +193,9 @@
         }
         .log-area div { padding: 0.2rem 0; border-bottom: 1px solid rgba(59, 130, 246, 0.1); }
         
-        /* Results */
         .results-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 1rem;
             margin-top: 1rem;
             max-height: 500px;
@@ -254,31 +209,23 @@
             transition: all 0.3s;
         }
         .book-card:hover { transform: translateY(-2px); border-color: #3b82f6; }
-        .book-cover {
-            width: 80px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 6px;
-            float: left;
-            margin-right: 1rem;
-        }
         .book-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.3rem; color: white; }
         .book-author { font-size: 0.75rem; color: #8ba3d9; margin-bottom: 0.5rem; }
-        .book-detail { font-size: 0.7rem; color: #6b83b0; margin: 0.2rem 0; }
-        .book-detail i { width: 20px; }
-        .book-source {
-            display: inline-block;
-            font-size: 0.6rem;
-            padding: 0.2rem 0.5rem;
+        .book-isbn { font-family: monospace; font-size: 0.8rem; color: #4ade80; margin: 0.3rem 0; }
+        .book-isbn i { color: #10b981; width: 20px; }
+        .copy-btn {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid #10b981;
             border-radius: 20px;
-            margin-top: 0.5rem;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.65rem;
+            cursor: pointer;
+            margin-left: 0.5rem;
+            transition: all 0.2s;
         }
-        .source-openlibrary { background: rgba(59, 130, 246, 0.3); color: #60a5fa; }
-        .source-googlebooks { background: rgba(16, 185, 129, 0.3); color: #34d399; }
-        .source-brasilapi { background: rgba(245, 158, 11, 0.3); color: #fbbf24; }
-        .source-metasbooks { background: rgba(139, 92, 246, 0.3); color: #a78bfa; }
+        .copy-btn:hover { background: #10b981; color: white; }
         
-        .export-buttons {
+        .export-panel {
             display: flex;
             flex-wrap: wrap;
             gap: 0.6rem;
@@ -287,7 +234,20 @@
             background: rgba(16, 185, 129, 0.1);
             border-radius: 0.8rem;
             border: 1px solid rgba(16, 185, 129, 0.3);
+            align-items: center;
         }
+        .isbn-output {
+            background: rgba(10, 15, 30, 0.8);
+            border-radius: 0.6rem;
+            padding: 0.5rem;
+            font-family: monospace;
+            font-size: 0.7rem;
+            color: #4ade80;
+            flex: 1;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+        
         .footer {
             margin-top: 1.5rem;
             text-align: center;
@@ -296,118 +256,110 @@
             font-size: 0.7rem;
             border-top: 1px solid rgba(59, 130, 246, 0.2);
         }
-        .clearfix::after { content: ""; clear: both; display: table; }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="hero-header">
         <div class="hero-title">
-            <i class="fas fa-search"></i> ISBN SCRAPER · STUDIO FINAL
+            <i class="fas fa-search"></i> ISBN FINDER · STUDIO FINAL
         </div>
         <div class="hero-badge">
-            <span class="badge"><i class="fas fa-book"></i> Multi-Source</span>
-            <span class="badge"><i class="fas fa-globe"></i> Open Library</span>
+            <span class="badge"><i class="fas fa-book"></i> Cari ISBN dari Judul</span>
             <span class="badge"><i class="fab fa-google"></i> Google Books</span>
-            <span class="badge"><i class="fas fa-chart-line"></i> Bulk Scrape</span>
-            <span class="badge"><i class="fas fa-file-export"></i> Export JSON/CSV</span>
+            <span class="badge"><i class="fas fa-copy"></i> Copy ISBN</span>
+            <span class="badge"><i class="fas fa-file-export"></i> Export ke Generator</span>
         </div>
     </div>
 
     <div class="control-panel">
         <div class="input-group">
-            <label><i class="fas fa-barcode"></i> ISBN (satu per baris)</label>
-            <textarea id="isbnList" placeholder="9780140328721&#10;9780451526535&#10;9782070360024">9780140328721
-9780451526535
-9782070360024</textarea>
-        </div>
-
-        <div class="file-import">
-            <label><i class="fas fa-file-import"></i> Import dari file .txt</label>
-            <input type="file" id="txtFileInput" accept=".txt">
-            <small style="color: #8ba3d9;">File dengan satu ISBN per baris (support ISBN-10 dan ISBN-13)</small>
+            <label><i class="fas fa-search"></i> Cari Buku</label>
+            <input type="text" id="searchQuery" placeholder="Judul buku, penulis, atau kata kunci...">
         </div>
 
         <div class="input-group">
-            <label><i class="fas fa-database"></i> Sumber Data</label>
-            <select id="dataSource">
-                <option value="all">🌐 All Sources (Combined - Best Result)</option>
-                <option value="openlibrary">📖 Open Library Only</option>
-                <option value="googlebooks">📚 Google Books Only</option>
-                <option value="brasilapi">🇧🇷 BrasilAPI Only (Brazil)</option>
-                <option value="metasbooks">🇫🇷 MetasBooks Only (France)</option>
+            <label><i class="fas fa-filter"></i> Filter</label>
+            <select id="searchFilter">
+                <option value="all">Semua (All)</option>
+                <option value="title">Judul (Title)</option>
+                <option value="author">Penulis (Author)</option>
+                <option value="publisher">Penerbit (Publisher)</option>
+                <option value="isbn">ISBN</option>
             </select>
-            <small style="color: #8ba3d9;">Pilih sumber data atau gunakan "All Sources" untuk hasil terbaik</small>
         </div>
 
-        <div class="split-setting">
-            <label><i class="fas fa-folder-open"></i> Delay antar request (ms):</label>
-            <input type="number" id="requestDelay" value="500" min="100" max="5000" step="100">
-            <span style="color: #8ba3d9; font-size: 0.7rem;">(Untuk menghindari rate limit, default 500ms)</span>
+        <div class="input-group">
+            <label><i class="fas fa-globe"></i> Negara / Domain</label>
+            <select id="countrySelect">
+                <option value="all">🌐 Semua (All Countries)</option>
+                <option value="US">🇺🇸 United States</option>
+                <option value="BR">🇧🇷 Brasil</option>
+                <option value="FR">🇫🇷 France</option>
+                <option value="ES">🇪🇸 España</option>
+                <option value="DE">🇩🇪 Deutschland</option>
+                <option value="UK">🇬🇧 United Kingdom</option>
+                <option value="ID">🇮🇩 Indonesia</option>
+            </select>
+            <small style="color: #8ba3d9;">Pilih negara untuk mendapatkan ISBN yang sesuai</small>
         </div>
 
         <div class="button-group">
-            <button class="btn btn-primary" id="scrapeBtn"><i class="fas fa-search"></i> Scrape ISBN</button>
-            <button class="btn btn-success" id="exportJsonBtn" disabled><i class="fas fa-file-code"></i> Export JSON</button>
-            <button class="btn btn-info" id="exportCsvBtn" disabled><i class="fas fa-file-csv"></i> Export CSV</button>
-            <button class="btn btn-warning" id="clearResultsBtn"><i class="fas fa-trash"></i> Clear Results</button>
+            <button class="btn btn-primary" id="searchBtn"><i class="fas fa-search"></i> Cari ISBN</button>
+            <button class="btn btn-success" id="copyAllIsbnBtn" disabled><i class="fas fa-copy"></i> Copy Semua ISBN</button>
+            <button class="btn btn-info" id="exportToGeneratorBtn" disabled><i class="fas fa-exchange-alt"></i> Kirim ke Generator</button>
+            <button class="btn btn-warning" id="clearResultsBtn"><i class="fas fa-trash"></i> Clear</button>
         </div>
     </div>
 
     <div class="progress-area">
-        <div class="progress-stats">
-            <span><i class="fas fa-chart-line"></i> Progress: <span id="progressPercent">0%</span></span>
-            <span><i class="fas fa-book"></i> <span id="scrapedCount">0</span> / <span id="totalCount">0</span> books</span>
-            <span><i class="fas fa-check-circle"></i> <span id="successCount">0</span> success</span>
-        </div>
-        <div class="progress-bar-container">
-            <div class="progress-fill" id="progressFill"></div>
-        </div>
         <div class="log-area" id="logArea">
-            <div>⏳ Siap scrape data buku dari ISBN...</div>
+            <div>⏳ Siap mencari ISBN dari berbagai sumber...</div>
         </div>
     </div>
 
-    <div id="resultsPanel" style="margin-top: 1rem;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
-            <h3><i class="fas fa-book-open"></i> Hasil Scraping</h3>
-            <span id="resultCount" style="color: #8ba3d9; font-size: 0.8rem;">0 buku</span>
+    <div id="resultsPanel">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; flex-wrap: wrap; gap: 0.5rem;">
+            <h3><i class="fas fa-list"></i> Hasil Pencarian ISBN</h3>
+            <span id="resultCount" style="color: #8ba3d9; font-size: 0.8rem;">0 buku ditemukan</span>
         </div>
         <div class="results-grid" id="resultsGrid">
             <div style="color: #6b83b0; text-align: center; padding: 2rem; grid-column: 1/-1;">
                 <i class="fas fa-search" style="font-size: 2rem; opacity: 0.5;"></i>
-                <p>Masukkan ISBN dan klik Scrape</p>
+                <p>Cari buku untuk mendapatkan ISBN</p>
             </div>
         </div>
     </div>
 
+    <div id="exportPanel" class="export-panel" style="display: none;">
+        <span><i class="fas fa-code"></i> ISBN List (siap copy ke generator):</span>
+        <div class="isbn-output" id="isbnOutput"></div>
+        <button class="btn btn-success" id="copyOutputBtn" style="padding: 0.3rem 0.8rem;"><i class="fas fa-copy"></i> Copy</button>
+    </div>
+
     <div class="footer">
-        <i class="fas fa-search" style="color:#3b82f6;"></i> ISBN SCRAPER · STUDIO FINAL | Support Open Library, Google Books, BrasilAPI, MetasBooks
+        <i class="fas fa-search" style="color:#3b82f6;"></i> ISBN FINDER · STUDIO FINAL | Cari ISBN dari judul buku | Data dari Google Books API
     </div>
 </div>
 
 <script>
 (function() {
     // DOM Elements
-    const isbnListTextarea = document.getElementById('isbnList');
-    const dataSourceSelect = document.getElementById('dataSource');
-    const requestDelayInput = document.getElementById('requestDelay');
-    const txtFileInput = document.getElementById('txtFileInput');
-    const scrapeBtn = document.getElementById('scrapeBtn');
-    const exportJsonBtn = document.getElementById('exportJsonBtn');
-    const exportCsvBtn = document.getElementById('exportCsvBtn');
+    const searchQuery = document.getElementById('searchQuery');
+    const searchFilter = document.getElementById('searchFilter');
+    const countrySelect = document.getElementById('countrySelect');
+    const searchBtn = document.getElementById('searchBtn');
+    const copyAllIsbnBtn = document.getElementById('copyAllIsbnBtn');
+    const exportToGeneratorBtn = document.getElementById('exportToGeneratorBtn');
     const clearResultsBtn = document.getElementById('clearResultsBtn');
+    const copyOutputBtn = document.getElementById('copyOutputBtn');
     const logArea = document.getElementById('logArea');
-    const progressPercent = document.getElementById('progressPercent');
-    const progressFill = document.getElementById('progressFill');
-    const scrapedCountSpan = document.getElementById('scrapedCount');
-    const totalCountSpan = document.getElementById('totalCount');
-    const successCountSpan = document.getElementById('successCount');
     const resultsGrid = document.getElementById('resultsGrid');
     const resultCountSpan = document.getElementById('resultCount');
+    const exportPanel = document.getElementById('exportPanel');
+    const isbnOutput = document.getElementById('isbnOutput');
 
-    let scrapedBooks = [];
-    let isScraping = false;
+    let searchResults = [];
 
     function log(message, type = 'info') {
         const entry = document.createElement('div');
@@ -419,322 +371,141 @@
 
     function clearLogs() { logArea.innerHTML = '<div>⏳ Log dibersihkan...</div>'; }
 
-    // Normalize ISBN (remove dashes, spaces, convert to 13-digit if needed)
-    function normalizeIsbn(isbn) {
-        let cleaned = isbn.replace(/[-\s]/g, '');
-        if (cleaned.length === 10) {
-            // Convert ISBN-10 to ISBN-13 (simple conversion)
-            let isbn13 = '978' + cleaned.slice(0, 9);
-            let checksum = 0;
-            for (let i = 0; i < 12; i++) {
-                checksum += parseInt(isbn13[i]) * (i % 2 === 0 ? 1 : 3);
-            }
-            checksum = (10 - (checksum % 10)) % 10;
-            isbn13 += checksum;
-            return { isbn10: cleaned, isbn13: isbn13 };
+    // Search books from Google Books API
+    async function searchBooks(query, filter, country) {
+        let searchTerm = query;
+        
+        // Apply filter
+        if (filter !== 'all') {
+            searchTerm = `${filter}:${query}`;
         }
-        return { isbn10: null, isbn13: cleaned };
-    }
-
-    // Fetch from Open Library
-    async function fetchFromOpenLibrary(isbn) {
+        
+        // Add country restriction
+        let countryParam = '';
+        if (country !== 'all') {
+            const countryCodes = {
+                'US': 'US', 'BR': 'BR', 'FR': 'FR', 'ES': 'ES', 'DE': 'DE', 'UK': 'GB', 'ID': 'ID'
+            };
+            countryParam = `&country=${countryCodes[country] || 'US'}`;
+        }
+        
+        const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(searchTerm)}&maxResults=40${countryParam}`;
+        
         try {
-            const url = `https://openlibrary.org/isbn/${isbn}.json`;
             const response = await fetch(url);
-            if (!response.ok) return null;
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const data = await response.json();
             
-            // Get authors
-            let authors = [];
-            if (data.authors) {
-                for (const authorRef of data.authors.slice(0, 3)) {
-                    try {
-                        const authorUrl = `https://openlibrary.org${authorRef.key}.json`;
-                        const authorRes = await fetch(authorUrl);
-                        const authorData = await authorRes.json();
-                        authors.push(authorData.name);
-                    } catch(e) { authors.push('Unknown'); }
+            if (!data.items || data.items.length === 0) {
+                return [];
+            }
+            
+            const books = [];
+            for (const item of data.items) {
+                const volumeInfo = item.volumeInfo;
+                const industryIdentifiers = volumeInfo.industryIdentifiers || [];
+                
+                // Get ISBN-13 and ISBN-10
+                let isbn13 = null;
+                let isbn10 = null;
+                
+                for (const id of industryIdentifiers) {
+                    if (id.type === 'ISBN_13') isbn13 = id.identifier;
+                    if (id.type === 'ISBN_10') isbn10 = id.identifier;
+                }
+                
+                // Prefer ISBN-13
+                const isbn = isbn13 || isbn10;
+                
+                if (isbn) {
+                    books.push({
+                        title: volumeInfo.title || 'Unknown Title',
+                        authors: volumeInfo.authors || ['Unknown Author'],
+                        publisher: volumeInfo.publisher || 'Unknown',
+                        publishedDate: volumeInfo.publishedDate || null,
+                        isbn: isbn,
+                        isbn13: isbn13,
+                        isbn10: isbn10,
+                        description: volumeInfo.description ? volumeInfo.description.substring(0, 200) : null,
+                        coverUrl: volumeInfo.imageLinks?.thumbnail || null,
+                        language: volumeInfo.language || null,
+                        pageCount: volumeInfo.pageCount || null
+                    });
                 }
             }
             
-            let description = data.description;
-            if (description && typeof description === 'object') {
-                description = description.value || JSON.stringify(description);
-            }
-            
-            return {
-                source: 'openlibrary',
-                title: data.title || 'Unknown Title',
-                authors: authors,
-                publisher: data.publishers ? data.publishers[0] : 'Unknown',
-                year: data.publish_date ? data.publish_date.slice(0,4) : null,
-                isbn: isbn,
-                description: description ? description.substring(0, 500) : null,
-                pages: data.number_of_pages || null,
-                coverUrl: `https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg`
-            };
+            return books;
         } catch(e) {
-            return null;
+            log(`Error: ${e.message}`, 'error');
+            return [];
         }
     }
 
-    // Fetch from Google Books
-    async function fetchFromGoogleBooks(isbn) {
-        try {
-            const url = `https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`;
-            const response = await fetch(url);
-            const data = await response.json();
-            
-            if (!data.items || data.items.length === 0) return null;
-            
-            const book = data.items[0].volumeInfo;
-            return {
-                source: 'googlebooks',
-                title: book.title || 'Unknown Title',
-                authors: book.authors || [],
-                publisher: book.publisher || 'Unknown',
-                year: book.publishedDate ? book.publishedDate.slice(0,4) : null,
-                isbn: isbn,
-                description: book.description ? book.description.substring(0, 500) : null,
-                pages: book.pageCount || null,
-                coverUrl: book.imageLinks?.thumbnail || null
-            };
-        } catch(e) {
-            return null;
-        }
-    }
-
-    // Fetch from BrasilAPI (Brazil)
-    async function fetchFromBrasilAPI(isbn) {
-        try {
-            const url = `https://brasilapi.com.br/api/isbn/v1/${isbn}`;
-            const response = await fetch(url);
-            if (!response.ok) return null;
-            const data = await response.json();
-            
-            return {
-                source: 'brasilapi',
-                title: data.title || 'Unknown Title',
-                authors: data.authors || [],
-                publisher: data.publisher || 'Unknown',
-                year: data.year || null,
-                isbn: isbn,
-                description: data.synopsis ? data.synopsis.substring(0, 500) : null,
-                pages: data.page_count || null,
-                coverUrl: data.cover_url || null
-            };
-        } catch(e) {
-            return null;
-        }
-    }
-
-    // Fetch from MetasBooks (France) - requires API key, but has demo mode
-    async function fetchFromMetasBooks(isbn) {
-        try {
-            // Using demo mode (no API key, limited to 5/day per IP)
-            const url = `https://metasbooks.fr/api/v1/lookup?ean=${isbn}`;
-            const response = await fetch(url, {
-                headers: { 'X-API-Key': 'demo' }
-            });
-            if (!response.ok) return null;
-            const data = await response.json();
-            
-            if (data.error) return null;
-            
-            return {
-                source: 'metasbooks',
-                title: data.titre || 'Unknown Title',
-                authors: data.auteur ? [data.auteur] : [],
-                publisher: data.editeur || 'Unknown',
-                year: data.date_parution ? data.date_parution.slice(0,4) : null,
-                isbn: isbn,
-                description: data.description ? data.description.substring(0, 500) : null,
-                pages: data.nbpages || null,
-                coverUrl: data.image_url || null
-            };
-        } catch(e) {
-            return null;
-        }
-    }
-
-    // Combined fetch - try all sources and return the best result
-    async function fetchCombined(isbn) {
-        const results = [];
-        
-        // Try Open Library
-        let book = await fetchFromOpenLibrary(isbn);
-        if (book) results.push(book);
-        
-        // Try Google Books
-        book = await fetchFromGoogleBooks(isbn);
-        if (book) results.push(book);
-        
-        // Try BrasilAPI (for Brazil ISBNs - starts with 65 or 85)
-        if (isbn.startsWith('65') || isbn.startsWith('85') || isbn.startsWith('97865') || isbn.startsWith('97885')) {
-            book = await fetchFromBrasilAPI(isbn);
-            if (book) results.push(book);
-        }
-        
-        // Try MetasBooks (for France ISBNs - starts with 9782 or 97827)
-        if (isbn.startsWith('9782') || isbn.startsWith('97827')) {
-            book = await fetchFromMetasBooks(isbn);
-            if (book) results.push(book);
-        }
-        
-        if (results.length === 0) return null;
-        
-        // Merge results - take best data from each source
-        const merged = {
-            source: results.map(r => r.source).join('+'),
-            title: results.find(r => r.title && r.title !== 'Unknown Title')?.title || results[0].title,
-            authors: results.find(r => r.authors && r.authors.length > 0)?.authors || [],
-            publisher: results.find(r => r.publisher && r.publisher !== 'Unknown')?.publisher || results[0].publisher,
-            year: results.find(r => r.year)?.year || null,
-            isbn: isbn,
-            description: results.find(r => r.description)?.description || null,
-            pages: results.find(r => r.pages)?.pages || null,
-            coverUrl: results.find(r => r.coverUrl)?.coverUrl || null
-        };
-        
-        return merged;
-    }
-
-    async function scrapeBook(isbn, source) {
-        const normalized = normalizeIsbn(isbn);
-        const isbnToUse = normalized.isbn13 || normalized.isbn10;
-        
-        try {
-            let book = null;
-            
-            switch(source) {
-                case 'openlibrary':
-                    book = await fetchFromOpenLibrary(isbnToUse);
-                    break;
-                case 'googlebooks':
-                    book = await fetchFromGoogleBooks(isbnToUse);
-                    break;
-                case 'brasilapi':
-                    book = await fetchFromBrasilAPI(isbnToUse);
-                    break;
-                case 'metasbooks':
-                    book = await fetchFromMetasBooks(isbnToUse);
-                    break;
-                case 'all':
-                default:
-                    book = await fetchCombined(isbnToUse);
-                    break;
-            }
-            
-            if (book) {
-                book.inputIsbn = isbn;
-                return book;
-            }
-            return null;
-        } catch(e) {
-            log(`Error scraping ${isbn}: ${e.message}`, 'error');
-            return null;
-        }
-    }
-
-    async function bulkScrape() {
-        if (isScraping) { log('⏳ Masih dalam proses...', 'error'); return; }
-        
-        const isbnsText = isbnListTextarea.value.trim();
-        const isbns = isbnsText.split(/\r?\n/).map(line => line.trim()).filter(line => line && /^\d{10,13}$/.test(line));
-        
-        if (!isbns.length) { log('❌ Tidak ada ISBN valid', 'error'); return; }
-        
-        const source = dataSourceSelect.value;
-        const delay = parseInt(requestDelayInput.value) || 500;
-        const uniqueIsbns = [...new Set(isbns)];
-        
-        totalCountSpan.innerText = uniqueIsbns.length;
-        scrapedCountSpan.innerText = '0';
-        successCountSpan.innerText = '0';
-        progressPercent.innerText = '0%';
-        progressFill.style.width = '0%';
-        scrapedBooks = [];
-        updateResultsDisplay();
-        
-        log(`🚀 Scrape ${uniqueIsbns.length} ISBN dari sumber: ${source}...`);
-        log(`⏱️ Delay antar request: ${delay}ms`);
-        isScraping = true;
-        exportJsonBtn.disabled = true;
-        exportCsvBtn.disabled = true;
-        
-        let successCount = 0;
-        for (let i = 0; i < uniqueIsbns.length; i++) {
-            const isbn = uniqueIsbns[i];
-            log(`⏳ [${i+1}/${uniqueIsbns.length}] Scraping ISBN: ${isbn}...`);
-            
-            const book = await scrapeBook(isbn, source);
-            
-            if (book) {
-                scrapedBooks.push(book);
-                successCount++;
-                log(`✅ ${book.title} oleh ${book.authors?.join(', ') || 'Unknown'}`, 'success');
-            } else {
-                log(`❌ Gagal scrape ISBN: ${isbn}`, 'error');
-            }
-            
-            const percent = Math.round(((i + 1) / uniqueIsbns.length) * 100);
-            progressPercent.innerText = `${percent}%`;
-            progressFill.style.width = `${percent}%`;
-            scrapedCountSpan.innerText = i + 1;
-            successCountSpan.innerText = successCount;
-            updateResultsDisplay();
-            
-            // Delay to avoid rate limiting
-            if (i < uniqueIsbns.length - 1) {
-                await new Promise(resolve => setTimeout(resolve, delay));
-            }
-        }
-        
-        log(`🎉 Selesai! ${successCount} dari ${uniqueIsbns.length} ISBN berhasil discrape`, 'success');
-        isScraping = false;
-        
-        if (scrapedBooks.length > 0) {
-            exportJsonBtn.disabled = false;
-            exportCsvBtn.disabled = false;
-        }
-    }
-    
-    function updateResultsDisplay() {
-        resultCountSpan.innerText = `${scrapedBooks.length} buku`;
-        
-        if (!scrapedBooks.length) {
-            resultsGrid.innerHTML = '<div style="color: #6b83b0; text-align: center; padding: 2rem; grid-column: 1/-1;"><i class="fas fa-search" style="font-size: 2rem; opacity: 0.5;"></i><p>Belum ada data buku</p></div>';
+    async function performSearch() {
+        const query = searchQuery.value.trim();
+        if (!query) {
+            log('❌ Masukkan judul buku atau kata kunci', 'error');
             return;
         }
         
-        resultsGrid.innerHTML = scrapedBooks.map(book => {
-            const sourceClass = {
-                'openlibrary': 'source-openlibrary',
-                'googlebooks': 'source-googlebooks',
-                'brasilapi': 'source-brasilapi',
-                'metasbooks': 'source-metasbooks'
-            }[book.source?.split('+')[0]] || 'source-openlibrary';
-            
-            const sourceName = {
-                'openlibrary': 'Open Library',
-                'googlebooks': 'Google Books',
-                'brasilapi': 'BrasilAPI',
-                'metasbooks': 'MetasBooks'
-            }[book.source?.split('+')[0]] || book.source;
-            
-            return `
-                <div class="book-card clearfix">
-                    ${book.coverUrl ? `<img src="${book.coverUrl}" class="book-cover" onerror="this.style.display='none'" alt="Cover">` : ''}
-                    <div class="book-title">${escapeHtml(book.title)}</div>
-                    <div class="book-author"><i class="fas fa-user"></i> ${book.authors?.join(', ') || 'Unknown'}</div>
-                    <div class="book-detail"><i class="fas fa-building"></i> ${book.publisher || 'Unknown'}</div>
-                    <div class="book-detail"><i class="far fa-calendar"></i> ${book.year || 'Unknown'}</div>
-                    <div class="book-detail"><i class="fas fa-book"></i> ${book.pages ? book.pages + ' hlm' : 'Unknown'}</div>
-                    <div class="book-detail"><i class="fas fa-barcode"></i> ${book.inputIsbn || book.isbn}</div>
-                    <span class="book-source ${sourceClass}"><i class="fas fa-database"></i> Source: ${sourceName}${book.source?.includes('+') ? ' +' : ''}</span>
+        const filter = searchFilter.value;
+        const country = countrySelect.value;
+        
+        log(`🔍 Mencari "${query}" dengan filter: ${filter}, negara: ${country}...`);
+        
+        searchBtn.disabled = true;
+        searchBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Mencari...';
+        
+        const results = await searchBooks(query, filter, country);
+        
+        searchBtn.disabled = false;
+        searchBtn.innerHTML = '<i class="fas fa-search"></i> Cari ISBN';
+        
+        if (results.length === 0) {
+            log('❌ Tidak ada buku ditemukan', 'error');
+            searchResults = [];
+            updateResultsDisplay();
+            copyAllIsbnBtn.disabled = true;
+            exportToGeneratorBtn.disabled = true;
+            exportPanel.style.display = 'none';
+            return;
+        }
+        
+        searchResults = results;
+        updateResultsDisplay();
+        copyAllIsbnBtn.disabled = false;
+        exportToGeneratorBtn.disabled = false;
+        
+        log(`✅ Ditemukan ${results.length} buku`, 'success');
+    }
+    
+    function updateResultsDisplay() {
+        resultCountSpan.innerText = `${searchResults.length} buku ditemukan`;
+        
+        if (!searchResults.length) {
+            resultsGrid.innerHTML = '<div style="color: #6b83b0; text-align: center; padding: 2rem; grid-column: 1/-1;"><i class="fas fa-search" style="font-size: 2rem; opacity: 0.5;"></i><p>Tidak ada hasil</p></div>';
+            return;
+        }
+        
+        resultsGrid.innerHTML = searchResults.map((book, idx) => `
+            <div class="book-card">
+                <div class="book-title">${escapeHtml(book.title)}</div>
+                <div class="book-author"><i class="fas fa-user"></i> ${book.authors.join(', ')}</div>
+                <div class="book-isbn"><i class="fas fa-barcode"></i> ISBN: ${book.isbn}
+                    <button class="copy-btn" onclick="copySingleIsbn('${book.isbn}')"><i class="fas fa-copy"></i> Copy</button>
                 </div>
-            `;
-        }).join('');
+                <div style="font-size: 0.65rem; color: #6b83b0; margin-top: 0.3rem;">
+                    <i class="fas fa-building"></i> ${book.publisher} 
+                    ${book.publishedDate ? `| 📅 ${book.publishedDate.slice(0,4)}` : ''}
+                    ${book.pageCount ? `| 📄 ${book.pageCount} hlm` : ''}
+                </div>
+            </div>
+        `).join('');
+        
+        // Update export panel
+        const isbnList = searchResults.map(book => book.isbn).join('\n');
+        isbnOutput.textContent = isbnList;
+        exportPanel.style.display = 'flex';
     }
     
     function escapeHtml(text) {
@@ -744,85 +515,74 @@
         return div.innerHTML;
     }
     
-    function exportToJSON() {
-        if (!scrapedBooks.length) return;
-        const dataStr = JSON.stringify(scrapedBooks, null, 2);
-        const blob = new Blob([dataStr], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `isbn_scrape_${new Date().toISOString().slice(0,19)}.json`;
-        a.click();
-        URL.revokeObjectURL(url);
-        log('📄 JSON berhasil diekspor', 'success');
+    function copySingleIsbn(isbn) {
+        navigator.clipboard.writeText(isbn).then(() => {
+            log(`📋 ISBN ${isbn} disalin ke clipboard`, 'success');
+        }).catch(() => {
+            log('❌ Gagal menyalin', 'error');
+        });
     }
     
-    function exportToCSV() {
-        if (!scrapedBooks.length) return;
+    function copyAllIsbn() {
+        const isbnList = searchResults.map(book => book.isbn).join('\n');
+        navigator.clipboard.writeText(isbnList).then(() => {
+            log(`📋 ${searchResults.length} ISBN disalin ke clipboard`, 'success');
+        }).catch(() => {
+            log('❌ Gagal menyalin', 'error');
+        });
+    }
+    
+    function exportToGenerator() {
+        const isbnList = searchResults.map(book => book.isbn).join('\n');
         
-        const headers = ['ISBN', 'Title', 'Authors', 'Publisher', 'Year', 'Pages', 'Description', 'Source'];
-        const rows = scrapedBooks.map(book => [
-            book.inputIsbn || book.isbn,
-            `"${(book.title || '').replace(/"/g, '""')}"`,
-            `"${(book.authors?.join(', ') || '').replace(/"/g, '""')}"`,
-            `"${(book.publisher || '').replace(/"/g, '""')}"`,
-            book.year || '',
-            book.pages || '',
-            `"${(book.description || '').substring(0, 200).replace(/"/g, '""')}"`,
-            book.source || ''
-        ]);
+        // Try to find the Book Generator textarea or create a new window
+        const bookGeneratorTextarea = document.getElementById('isbnList');
         
-        const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n');
-        const blob = new Blob([csvContent], { type: 'text/csv' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `isbn_scrape_${new Date().toISOString().slice(0,19)}.csv`;
-        a.click();
-        URL.revokeObjectURL(url);
-        log('📊 CSV berhasil diekspor', 'success');
+        if (bookGeneratorTextarea) {
+            // If Book Generator is open in same page
+            bookGeneratorTextarea.value = isbnList;
+            log(`✅ ${searchResults.length} ISBN dikirim ke Book Generator!`, 'success');
+        } else {
+            // Copy to clipboard and show instruction
+            navigator.clipboard.writeText(isbnList).then(() => {
+                log(`📋 ${searchResults.length} ISBN disalin ke clipboard! Buka Book Generator dan paste di textarea.`, 'success');
+            });
+        }
     }
     
     function clearResults() {
-        scrapedBooks = [];
+        searchResults = [];
         updateResultsDisplay();
-        exportJsonBtn.disabled = true;
-        exportCsvBtn.disabled = true;
-        scrapedCountSpan.innerText = '0';
-        successCountSpan.innerText = '0';
-        totalCountSpan.innerText = '0';
-        progressPercent.innerText = '0%';
-        progressFill.style.width = '0%';
-        log('🗑️ Hasil scraping dibersihkan', 'info');
+        copyAllIsbnBtn.disabled = true;
+        exportToGeneratorBtn.disabled = true;
+        exportPanel.style.display = 'none';
+        searchQuery.value = '';
+        log('🗑️ Hasil pencarian dibersihkan', 'info');
     }
     
-    // File import
-    txtFileInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const content = e.target.result;
-            const isbns = content.split(/\r?\n/).map(line => line.trim()).filter(line => line && /^\d{10,13}$/.test(line));
-            if (isbns.length > 0) {
-                isbnListTextarea.value = isbns.join('\n');
-                log(`📄 Import ${isbns.length} ISBN dari file ${file.name}`, 'success');
-            } else {
-                log('❌ Tidak ada ISBN valid dalam file', 'error');
-            }
-        };
-        reader.readAsText(file);
-    });
+    // Global function for copy button
+    window.copySingleIsbn = copySingleIsbn;
     
     // Event listeners
-    scrapeBtn.addEventListener('click', bulkScrape);
-    exportJsonBtn.addEventListener('click', exportToJSON);
-    exportCsvBtn.addEventListener('click', exportToCSV);
+    searchBtn.addEventListener('click', performSearch);
+    copyAllIsbnBtn.addEventListener('click', copyAllIsbn);
+    exportToGeneratorBtn.addEventListener('click', exportToGenerator);
     clearResultsBtn.addEventListener('click', clearResults);
+    copyOutputBtn.addEventListener('click', () => {
+        const text = isbnOutput.textContent;
+        navigator.clipboard.writeText(text).then(() => {
+            log('📋 Semua ISBN disalin ke clipboard!', 'success');
+        });
+    });
     
-    log('✅ ISBN SCRAPER · STUDIO FINAL siap digunakan!');
-    log('📚 Support sumber: Open Library, Google Books, BrasilAPI, MetasBooks');
-    log('🌍 Gunakan "All Sources" untuk hasil terbaik dari kombinasi semua sumber');
+    // Enter key to search
+    searchQuery.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') performSearch();
+    });
+    
+    log('✅ ISBN FINDER · STUDIO FINAL siap digunakan!');
+    log('📚 Cari buku berdasarkan judul, penulis, atau penerbit');
+    log('📋 Copy ISBN dan gunakan di Book Generator');
 })();
 </script>
 </body>
